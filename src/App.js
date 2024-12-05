@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
 
-function App() {
+function UserList() {
+  const [users, setUsers] = useState([]);
+
+  //Erro estava ao passar a função async diretamente no useEffect, não pode ser usada por que é uma promise
+  //Criei um const para fazer a função assíncrona dentro do useEffect
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch('https://api.example.com/users');
+        const data = await response.json();
+        setUsers(data.users);
+      } catch (error) {
+        console.error('Error ao buscar usuários')
+      }
+    }
+    fetchUsers();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Lista de Usuários</h1>
+      <ul>
+        {users.map(user => (
+          <li key={user.id}>{user.name}</li>
+        ))}
+      </ul>
     </div>
   );
 }
 
-export default App;
+export default UserList;
